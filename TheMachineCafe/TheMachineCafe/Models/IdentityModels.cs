@@ -29,5 +29,8 @@ namespace TheMachineCafe.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<Boisson> Boissons { get; set; }
+        public DbSet<Selection> Selections { get; set; }
     }
 }
