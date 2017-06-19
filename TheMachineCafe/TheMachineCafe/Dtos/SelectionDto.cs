@@ -1,33 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using System.ComponentModel.DataAnnotations;
+using TheMachineCafe.Models;
 
-namespace TheMachineCafe.Models
+namespace TheMachineCafe.Dtos
 {
-    public class Selection
+    public class SelectionDto
     {
         public int Id { get; set; }
 
-        [Display(Name = "Selectionner un boisson")]
         [Required]
         public int BoissonId { get; set; }
 
-        [Required]
         public string UserId { get; set; }
 
-        [Display(Name = "Sucre")]
         [Required]
         [Range(0, 10)]
         //[RegularExpression("([0-9]+)", ErrorMessage = "Please enter valid Number")]
         public int Sucre { get; set; }
 
-        [Display(Name = "Muge")]
         [Required]
         public bool HasMuge { get; set; }
 
-        public Boisson boisson { get; set; }
-        public ApplicationUser User { get; set; }
+        public BoissonDto boisson { get; set; }
     }
 }

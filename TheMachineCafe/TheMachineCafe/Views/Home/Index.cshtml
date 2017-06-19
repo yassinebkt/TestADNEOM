@@ -2,30 +2,147 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<style>
+form
+{
+    align:"center";
+}
+</style>
+
+<div class="jumbotron" style="margin:0 auto;width:50%;text-align:left">
+    <form data-toggle="validator" role="form" id="myForm">
+        <div class="form-group">
+            <label for="BoissonId" class="control-label">Boisson</label>
+            <select id="BoissonId" class="form-control" name="BoissonId" required>
+                <option value="None" selected="Selected">Select Boisson</option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label for="Sucre" class="control-label">Sucre</label>
+            <input type="number" class="form-control" id="Sucre" name="Sucre" min="0" max="5" placeholder="0" required>
+        </div>
+        <div class="form-group">
+                <label for="HasMuge" class="control-label">J'utilise mon propre Muge</label>
+                <input id="HasMuge" type="checkbox" value="true" name="HasMuge" />
+                <input type="hidden" value="false" name="HasMuge" />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" onclick="Confirm()" >Commander</button>
+        </div>
+    </form>
+    </div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Votre dernier choix</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">Voila votre dernier choix, cliquer sur commander si vous voulez le choisir !.</p>
+                <div id="r">
+                   
+                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"  onclick="Confirm()" >Commander</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+<div class="modal fade" id="myModalConfirme" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">Merci pour votre achat, A bientot !</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
     </div>
 </div>
+   
+
+@section scripts
+{
+        @Scripts.Render("~/bundles/jqueryval")
+        <script>
+            function Confirm()
+            {
+                $('#myModal').modal('hide');
+                $('#myModalConfirme').modal('show');
+            }
+            $(document).ready(function () {
+
+                $("#myForm").submit(function(e) {
+                    //prevent Default functionality
+                    e.preventDefault();
+
+                    //To submit the form
+                    $.ajax({
+                        url: "/api/Selection/AddSelection",
+                        type: 'post',
+                        dataType: 'application/json',
+                        data: $("#myForm").serialize(),
+                        success: function (data) {
+                            $('#myModalConfirme').modal('show');
+
+                            }
+                    });
+
+                });
+
+                //Populate the DropDownList of Boissons
+                $.ajax({
+                    url: 'api/Boisson/GetBoissons',
+                    type: "GET",
+                    dataType: "json"
+                })
+                .done(function (data) {
+                    if (data != null) {
+                        $.each(data, function (key, value) {                        
+                            $("#BoissonId").append('<option value="'+ value.Id + '">' + value.nom + '</option>')
+                         
+                        });
+                    }
+                });
+
+                //Populate the suggestion for the user
+                $.ajax({
+                    url: '/api/Selection/GetLastSelection',
+                    type: "GET",
+                    dataType: "json"
+                })
+                .done(function (data) {
+                    if (data != null)
+                    {
+                        $('#r').html('<p><b>Boisson</b> : ' + data.boisson.nom + '</p>');
+                        $('#r').append('<p><b>Sucre</b> : ' + data.Sucre + '/5</p>');
+                        if (data.HasMuge) {
+                            $('#r').append('<p><b> Vous avez votre propre muge</b></p>');
+                        }
+                        else {
+                            $('#r').append("<p><b> Vous n'avez pas votre propre muge</b></p>");
+                        }
+                        $('#myModal').modal('show');
+                    }                   
+                });
+            });
+        </script>
+}
+
