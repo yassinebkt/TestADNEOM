@@ -32,13 +32,6 @@ namespace TheMachineCafe.Controllers.Api
                             
         }
         
-        //Get api/Selection/GetBoissons
-        [HttpGet]
-        public IEnumerable<Boisson> GetBoissons()
-        {
-            var boissons = dal.GetBoissons();
-            return boissons;
-        }
 
         //Post api/Selection/AddSelection
         [HttpPost]
