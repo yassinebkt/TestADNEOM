@@ -20,46 +20,7 @@ namespace TheMachineTesting
     [TestClass]
     public class MachineTest
     {
-        [TestMethod]
-        public void Test_AddSelection()
-        {
-            Mapper.Initialize(m => m.AddProfile(new MappingProfile()));
 
-            //var controllerContext = new Mock<ControllerContext>();
-            //var principal = new Moq.Mock<IPrincipal>();
-            //principal.Setup(p => p.IsInRole("Administrator")).Returns(true);
-            //principal.SetupGet(x => x.Identity.Name).Returns("Test@machine.fr");
-            //controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
-            //var controller1 = new TheMachineCafe.Controllers.SelectionController();
-            //controller1.ControllerContext = controllerContext.Object;
-
-            //var context = new Mock<HttpContextBase>();
-            //var mockIdentity = new Mock<IIdentity>();
-            //context.SetupGet(x => x.User.Identity).Returns(mockIdentity.Object);
-            //mockIdentity.Setup(x => x.Name).Returns("Test@machine.fr");
-
-            var claim = new Claim("test", "IdOfYourChoosing");
-            var mockIdentity =
-                Mock.Of<ClaimsIdentity>(ci => ci.FindFirst(It.IsAny<string>()) == claim);
-            var mockContext = Mock.Of<ControllerContext>(cc => cc.HttpContext.User == mockIdentity);
-            var controller1 = new HomeController()
-            {
-                ControllerContext = mockContext
-            };
-
-            string tr = HttpContext.Current.User.Identity.Name;
-
-            var testItem = GetTestSelection();
-            var controller= new TheMachineCafe.Controllers.Api.SelectionController();
-
-
-            var result = controller.AddSelection(testItem) as SelectionDto;
-
-            Assert.AreEqual(testItem.BoissonId, result.BoissonId);
-            Assert.AreEqual(testItem.Sucre, result.Sucre);
-            Assert.AreEqual(testItem.HasMuge, result.HasMuge);
-            Assert.AreEqual(testItem.Id, result.Id);
-        }
 
         [TestMethod]
         public void Test_GetBoissons()
